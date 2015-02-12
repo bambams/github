@@ -80,7 +80,12 @@ EOF
         dest="${2:-$(basename "$repo" .git)}";
         shift 2;
 
-        url="$("$0" url "$repo")";
+        url="$("$0" url "$repo" 2>/dev/null)";
+
+        if [[ -z $dest || -z $url ]]; then
+            "$0" help 1>&2;
+            exit 1;
+        fi;
 
         git "$cmd" "$@" "$url" "$dest";
         ;;
@@ -104,13 +109,18 @@ EOF
         repo="$2";
 
         if ! shift 2; then
-            repo="$name";
+            repo="$1";
             name=origin;
             shift;
         fi;
 
-        url="$("$0" url "$repo")";
-        pushurl="$("$0" push-url "$repo")";
+        url="$("$0" url "$repo" 2>/dev/null)";
+        pushurl="$("$0" push-url "$repo" 2>/dev/null)";
+
+        if [[ -z $pushurl || -z $url ]]; then
+            "$0" help 1>&2;
+            exit 1;
+        fi;
 
         git "$cmd" add "$@" "$name" "$url" "$@" || exit $?;
         git "$cmd" set-url --push "$name" "$pushurl";
@@ -121,6 +131,11 @@ EOF
     url)
         repo="$1";
         shift;
+
+        if [[ -z $repo ]]; then
+            "$0" help 1>&2;
+            exit 1;
+        fi;
 
         if [[ $(dirname "$repo") = . ]]; then
             repo="$user/$repo";
@@ -135,9 +150,14 @@ EOF
         echo "$url";
         ;;
     user)
+        if [[ -z $user ]]; then
+            echo 'The GitHub user could not be guessed.' 1>&2;
+            exit 1;
+        fi;
+
         echo "$user";
         ;;
     *)
-        echo "Command '$cmd' is not supported.";
+        echo "Command '$cmd' is not supported." 1>&2;
         exit 1;
 esac;
