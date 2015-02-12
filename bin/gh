@@ -26,13 +26,23 @@ $(basename "$0") SUBCOMMAND [ ARG... ]
 
       Show this message.
 
+  push-url
+
+      Generate a GitHub URL for pushing. A push URL is typically of the
+      form git@... or https://USER@... The generated URL is based on the
+      scheme in use.
+
+      (See also clone or remote for additional details)
+
   remote NAME [USER/]REPO
 
-      Add remote repository.
+      Add remote repository with GitHub fetch and push URLs.
 
   url [USER/]REPO
 
-      Generate a GitHub URL (See clone for details).
+      Generate a GitHub URL.
+
+      (See clone for details)
 
 =ENVIRONMENT=
 
