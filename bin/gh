@@ -1,0 +1,105 @@
+#!/bin/bash
+
+domain="${GITHUB_DOMAIN:-github.com}";
+path="${GITHUB_BASEPATH:-/}";
+scheme="${GITHUB_SCHEME:-git://}";
+user="${GITHUB_USERNAME:-$USER}";
+
+cmd="$1";
+shift;
+
+case "$cmd" in
+    ''|'-?'|-h|help)
+        cat <<EOF 1>&2;
+$(basename "$0") SUBCOMMAND [ ARG... ]
+
+=SUBCOMMANDS=
+
+  clone [USER/]REPO [ DEST ]
+
+      Clone the GitHub repository designated by USER/REPO into DEST.
+
+      By default uses GITHUB_SCHEME. USER defaults to GITHUB_USERNAME.
+      DEST defaults to the basename of REPO.
+
+  help
+
+      Show this message.
+
+  remote NAME [USER/]REPO
+
+      Add remote repository.
+
+  url [USER/]REPO
+
+      Generate a GitHub URL (See clone for details).
+
+=ENVIRONMENT=
+
+  GITHUB_BASEPATH     The URL path prefix (i.e., before the user/repo).
+
+  GITHUB_DOMAIN       The domain name of GitHub (default: github.com).
+
+  GITHUB_USERNAME     Your own GitHub username (default: USER).
+
+  GITHUB_SCHEME       The URL scheme to use (default: git://). Must include
+                      colon and slashes.
+EOF
+        ;;
+    clone)
+        repo="$1";
+        dest="${2:-$(basename "$repo" .git)}";
+        shift 2;
+
+        url="$("$0" url "$repo")";
+
+        git "$cmd" "$@" "$url" "$dest";
+        ;;
+    push-url)
+        repo="$1";
+        shift;
+
+        if [[ $scheme = git:// ]]; then
+            scheme=git@
+        elif [[ $scheme =~ ^https?://$ ]]; then
+            domain="${user}@${domain}";
+        fi;
+
+        GITHUB_SCHEME="$scheme" GITHUB_DOMAIN="$domain" "$0" url "$repo";
+        ;;
+    remote)
+        name="${1:-origin}";
+        repo="$2";
+
+        if ! shift 2; then
+            repo="$name";
+            name=origin;
+            shift;
+        fi;
+
+        url="$("$0" url "$repo")";
+        pushurl="$("$0" push-url "$repo")";
+
+        git "$cmd" add "$@" "$name" "$url" "$@" || exit $?;
+        git "$cmd" set-url --push "$name" "$pushurl";
+        ;;
+    url)
+        repo="$1";
+        shift;
+
+        if [[ $(dirname "$repo") = . ]]; then
+            repo="$user/$repo";
+        fi;
+
+        if [[ ! $repo =~ \.git$ ]]; then
+            repo="${repo}.git";
+        fi;
+
+        url="${scheme}${domain}${path}${repo}";
+
+        echo "$url";
+        ;;
+    *)
+        echo "Command '$cmd' is not supported.";
+        exit 1;
+esac;

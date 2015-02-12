@@ -1,0 +1,10 @@
+This is just YAGHCLC (yet another GitHub command line client). That isn't
+intended to be a name, but a description. I realize that there is a
+semi-popular GitHub command line client already (I believe just called
+hub), and it is way more featureful, but every time I try to use it it
+seems broken or something (I forget). In any case, this is just meant to
+be a personal little library for the basics (mainly cloning). Part of the
+reasoning is that behind a proxy I need to use HTTP and this could allow
+me to set that up in the environment and forget about it.
+
+# vim: nocin
