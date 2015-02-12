@@ -50,10 +50,10 @@ $(basename "$0") SUBCOMMAND [ ARG... ]
 
   GITHUB_DOMAIN       The domain name of GitHub (default: github.com).
 
-  GITHUB_USERNAME     Your own GitHub username (default: USER).
-
   GITHUB_SCHEME       The URL scheme to use (default: git://). Must include
                       colon and slashes.
+
+  GITHUB_USERNAME     Your own GitHub username (default: USER).
 EOF
         ;;
     clone)
