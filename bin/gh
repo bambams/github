@@ -78,7 +78,7 @@ EOF
     clone)
         repo="$1";
         dest="${2:-$(basename "$repo" .git)}";
-        shift 2;
+        shift 2 || shift;
 
         url="$("$0" url "$repo" 2>/dev/null)";
 
