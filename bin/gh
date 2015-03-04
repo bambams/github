@@ -34,13 +34,16 @@ $(basename "$0") SUBCOMMAND [ ARG... ]
 
       Show this message.
 
-  push-url
+  push-url [ --add NAME ] REPO
 
       Generate a GitHub URL for pushing. A push URL is typically of the
       form git@... or https://USER@... The generated URL is based on the
       scheme in use.
 
       (See also clone or remote for additional details)
+
+      If --name NAME is used then set the push URL for the remote
+      repository NAME.
 
   remote NAME [USER/]REPO
 
@@ -96,6 +99,23 @@ EOF
         repo="$1";
         shift;
 
+        if [[ $repo = --add ]]; then
+            name="$1";
+            repo="$2";
+            shift 2;
+
+            pushurl="$("$0" push-url "$repo" 2>/dev/null)";
+
+            if [[ -z $name || -z $pushurl ]]; then
+                "$0" help 1>&2;
+                exit 1;
+            fi;
+
+            git remote set-url --push "$name" "$pushurl";
+
+            exit $?;
+        fi;
+
         if [[ $scheme = git:// ]]; then
             scheme=git@
         elif [[ $scheme =~ ^https?://$ ]]; then
@@ -124,7 +144,7 @@ EOF
         fi;
 
         git "$cmd" add "$@" "$name" "$url" "$@" || exit $?;
-        git "$cmd" set-url --push "$name" "$pushurl";
+        "$0" push-url --add "$name" "$repo";
         ;;
     scheme)
         echo "$scheme";
