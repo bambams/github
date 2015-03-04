@@ -102,7 +102,8 @@ EOF
             domain="${user}@${domain}";
         fi;
 
-        GITHUB_SCHEME="$scheme" GITHUB_DOMAIN="$domain" "$0" url "$repo";
+        GITHUB_SCHEME="$scheme" GITHUB_DOMAIN="$domain" \
+                GITHUB_BASEPATH=':' "$0" url "$repo";
         ;;
     remote)
         name="${1:-origin}";
