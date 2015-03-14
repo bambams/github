@@ -9,4 +9,4 @@ help:
 	@echo 'Only practical target is install. Symlinks the executable to $$(PREFIX)/bin. Use PREFIX= to specify the installation prefix (default $$HOME).';
 
 install:
-	ln -s $$(PWD)/$(EXE) $(PREFIX)/bin;
+	ln -s $(PWD)/$(EXE) $(PREFIX)/bin;
