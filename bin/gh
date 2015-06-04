@@ -42,7 +42,7 @@ $(basename "$0") SUBCOMMAND [ ARG... ]
 
       (See also clone or remote for additional details)
 
-      If --name NAME is used then set the push URL for the remote
+      If --add NAME is used then set the push URL for the remote
       repository NAME.
 
   remote NAME [USER/]REPO
